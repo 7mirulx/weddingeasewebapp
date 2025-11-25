@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jomkahwin-app
+    working_dir: /var/www/app
+    volumes:
+      - .:/var/www
+    ports:
+      - "8000:8000"
+    command: bash -c "composer install && php artisan serve --host=0.0.0.0 --port=8000"
+    depends_on:
+      - postgres
+    networks:
+      - jk-network
+
+  postgres:
+    image: postgres:15
+    container_name: jomkahwin-pg-database
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: jom_kawin
+    networks:
+      - jk-network
+
+networks:
+  jk-network:
+
+volumes:
+  pgdata:
