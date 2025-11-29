@@ -1,5 +1,5 @@
 # Base image
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -20,3 +20,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set workdir
 WORKDIR /var/www
+
+# Copy the whole project into the container
+COPY . .
+
+# (Optional) Install composer dependencies during build
+# RUN composer install --no-dev --optimize-autoloader
+
+# Default command for artisan serve
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

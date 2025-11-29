@@ -1,11 +1,28 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@layer components {
+    .btn-primary {
+        @apply bg-primary text-white hover:bg-primary/90 transition font-medium;
+    }
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    .btn-alt {
+        @apply bg-alt text-white hover:bg-alt/90 transition font-medium;
+    }
+
+    .card {
+        @apply bg-brand2 p-4 rounded-md shadow;
+    }
+}
+
+@layer base {
+    body {
+        @apply bg-brand text-[#3A0030]
+    }
+}
+
+.mask-gradient {
+    mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
 }
