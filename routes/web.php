@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\WeddingDetailController;
 
 // ---------------------------
 // PUBLIC PAGES
@@ -31,8 +32,12 @@ Route::middleware('auth')->group(function () {
 
     // Client dashboard
     Route::get('/dashboard', function () {
-        return view('dashboard'); // nanti kau create page ni
+        return view('dashboard');
     })->name('dashboard');
+
+    // ⭐ Wedding Setup Routes (ADD HERE)
+    Route::get('/wedding/setup', [WeddingDetailController::class, 'create']);
+    Route::post('/wedding/setup', [WeddingDetailController::class, 'store']);
 
     // Vendor dashboard
     Route::get('/vendor', function () {
@@ -43,5 +48,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin', function () {
         return "Admin Panel (coming soon)";
     })->name('admin.dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'index']);
+    
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile']);
+    Route::post('/profile/wedding', [ProfileController::class, 'updateWedding']);
 
 });
