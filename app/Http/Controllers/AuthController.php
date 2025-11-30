@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // Show Login Form
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    // Handle Login
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -21,19 +23,29 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/');
+
+            // Redirect ikut role
+            $role = Auth::user()->role;
+
+            if ($role === 'admin') return redirect('/admin');
+            if ($role === 'vendor') return redirect('/vendor');
+            return redirect('/dashboard');   // client
         }
 
-        return back()->withErrors(['email' => 'The provided credentials do not match our records.'])->onlyInput('email');
+        return back()->withErrors([
+            'email' => 'Invalid login details.'
+        ]);
     }
 
+    // Show Register Form
     public function showRegister()
     {
         return view('auth.register');
     }
 
+    // Handle Registration
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -42,18 +54,19 @@ class AuthController extends Controller
             'password' => ['required','confirmed','min:6'],
         ]);
 
-        // Use the User model fillable; password cast will handle hashing if configured.
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'name'     => $data['name'],
+            'email'    => $data['email'],
             'password' => Hash::make($data['password']),
+            'role'     => 'client',       // default role
         ]);
 
         Auth::login($user);
 
-        return redirect('/');
+        return redirect('/dashboard');
     }
 
+    // Logout
     public function logout(Request $request)
     {
         Auth::logout();

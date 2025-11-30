@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <style>
-        .mask-gradient {
-            mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
-        }
-    </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 

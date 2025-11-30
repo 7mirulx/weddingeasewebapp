@@ -3,15 +3,45 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
+// ---------------------------
+// PUBLIC PAGES
+// ---------------------------
+
+// Landing page
 Route::get('/', function () {
     return view('landing');
-});
+})->name('home');
 
-// Authentication views & actions (simple session-based implementation)
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-
+// Register
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
+// Login
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+
+// Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// ---------------------------
+// PROTECTED ROUTES (User must be logged in)
+// ---------------------------
+Route::middleware('auth')->group(function () {
+
+    // Client dashboard
+    Route::get('/dashboard', function () {
+        return view('dashboard'); // nanti kau create page ni
+    })->name('dashboard');
+
+    // Vendor dashboard
+    Route::get('/vendor', function () {
+        return "Vendor Dashboard (coming soon)";
+    })->name('vendor.dashboard');
+
+    // Admin dashboard
+    Route::get('/admin', function () {
+        return "Admin Panel (coming soon)";
+    })->name('admin.dashboard');
+
+});

@@ -3,13 +3,13 @@ import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     server: {
-        host: true,
+        host: '127.0.0.1',
         port: 5173,
 
         hmr: {
-            host: 'host.docker.internal',   // ✨ THIS IS THE FIX
-            port: 5173,
+            host: 'localhost',
             protocol: 'ws',
+            port: 5173,
         },
     },
 
