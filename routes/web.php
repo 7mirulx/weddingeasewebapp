@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WeddingDetailController;
+use App\Http\Controllers\ProfileController; 
 
 // ---------------------------
 // PUBLIC PAGES
@@ -50,7 +51,7 @@ Route::middleware('auth')->group(function () {
     })->name('admin.dashboard');
 
     Route::get('/profile', [ProfileController::class, 'index']);
-    
+
     Route::post('/profile/update', [ProfileController::class, 'updateProfile']);
     Route::post('/profile/wedding', [ProfileController::class, 'updateWedding']);
 
