@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WeddingDetailController;
-use App\Http\Controllers\ProfileController; 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendorController;
 
 // ---------------------------
 // PUBLIC PAGES
@@ -54,5 +55,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/profile/update', [ProfileController::class, 'updateProfile']);
     Route::post('/profile/wedding', [ProfileController::class, 'updateWedding']);
+
+    Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
+    Route::get('/vendors/{id}', [VendorController::class, 'show'])->name('vendors.show');
+
 
 });
