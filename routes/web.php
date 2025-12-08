@@ -57,7 +57,24 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/wedding', [ProfileController::class, 'updateWedding']);
 
     Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
+    Route::get('/vendors/search', [VendorController::class, 'search'])->name('vendors.search');
+    Route::get('/vendors/fetch/{id}', [VendorController::class, 'fetch'])->name('vendors.fetch');
     Route::get('/vendors/{id}', [VendorController::class, 'show'])->name('vendors.show');
+    // routes/web.php
+    // Route::get('/vendors/fetch/{id}', [VendorController::class, 'fetch'])->name('vendors.fetch');
+
+
+    Route::get('/myvendors', [VendorController::class, 'myVendors'])->middleware('auth');
+    Route::post('/myvendors/add', [VendorController::class, 'storeUserVendor']);
+    Route::delete('/myvendors/delete/{id}', [VendorController::class, 'deleteuservendor'])->name('vendors.delete');
+    Route::put('/myvendors/update/{id}', [VendorController::class, 'updateBooking'])->name('vendors.update');
+    Route::post('/myvendors/rate/{booking}', [VendorController::class, 'rate'])->name('vendors.rate');
+
+
+    // Search vendors (AJAX for Add Vendor modal)
+
+    // Route::get('/vendors/search', [VendorController::class, 'search'])->name('vendors.search');
+
 
 
 });

@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vendor extends Model
 {
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
     protected $table = 'vendors'; // explicit
 
     protected $fillable = [
@@ -28,6 +33,10 @@ class Vendor extends Model
         'created_by_type',
         'featured_start',
         'featured_end',
+        'service_ids',
+        'owner_user_id',
+        'is_paid',
+        'rating',
     ];
 
     protected $casts = [
@@ -36,5 +45,7 @@ class Vendor extends Model
         'featured_start' => 'datetime',
         'featured_end' => 'datetime',
         'service_ids' => 'array',
+        'is_paid' => 'boolean',
     ];
+
 }

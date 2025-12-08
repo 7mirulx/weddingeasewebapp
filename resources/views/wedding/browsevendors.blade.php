@@ -14,13 +14,12 @@
     ======================== --}}
     <div 
         x-data="{ current: 0, slides: [
-            '{{ asset('images/carousel1.jpg') }}',
-            '{{ asset('images/carousel2.jpg') }}',
-            '{{ asset('images/carousel3.jpg') }}'
+            '{{ asset('image/carousel1.jpg') }}',
+            '{{ asset('image/carousel2.jpg') }}',
+            '{{ asset('image/carousel3.jpg') }}'
         ] }"
         x-init="setInterval(() => current = (current + 1) % slides.length, 4000)"
-        class="w-full h-48 md:h-64 rounded-2xl overflow-hidden shadow-xl mb-10 relative bg-pink-200"
-    >
+        class="w-full h-48 md:h-64 rounded-2xl overflow-hidden shadow-xl mb-10 relative bg-pink-200">
 
         {{-- Slides --}}
         <template x-for="(slide, index) in slides" :key="index">
@@ -114,8 +113,11 @@
             {{-- Banner --}}
             <div 
                 class="h-40 bg-pink-50 bg-cover bg-center" 
-                style="background-image: url('{{ $vendor->banner_url ?? asset("images/vendor-fallback.jpg") }}');">
+                style="background-image: url('{{ $vendor->banner_url 
+                    ? asset("image/".$vendor->banner_url) 
+                    : asset("image/vendor-fallback.jpg") }}');">
             </div>
+
 
             {{-- Card Body --}}
             <div class="p-5">
