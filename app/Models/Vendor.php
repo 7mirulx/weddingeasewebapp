@@ -11,6 +11,11 @@ class Vendor extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(VendorRating::class);
+    }
+
     protected $table = 'vendors'; // explicit
 
     protected $fillable = [
@@ -47,5 +52,9 @@ class Vendor extends Model
         'service_ids' => 'array',
         'is_paid' => 'boolean',
     ];
+
+
+    
+
 
 }

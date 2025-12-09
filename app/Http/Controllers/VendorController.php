@@ -14,7 +14,7 @@ class VendorController extends Controller
     // ================================
     public function index(Request $request)
     {
-        $vendors = Vendor::query()
+        $vendors = Vendor::with('reviews.user')
             ->when($request->search, fn($q) =>
                 $q->where('vendor_name', 'ILIKE', "%{$request->search}%")
             )
@@ -116,7 +116,10 @@ class VendorController extends Controller
             'is_completed' => false,
         ]);
 
-        return redirect()->back()->with('success', 'Vendor & Booking saved successfully!');
+        return response()->json([
+            'status' => 'success',
+            'vendor_id' => $vendor->id
+        ]);
     }
 
 
