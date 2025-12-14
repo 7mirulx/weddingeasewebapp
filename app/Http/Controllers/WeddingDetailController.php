@@ -30,4 +30,45 @@ class WeddingDetailController extends Controller
 
         return redirect('/dashboard')->with('success', 'Wedding details saved!');
     }
+
+    public function uploadDocument(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:jpg,jpeg,png,pdf|max:4096',
+            'type' => 'required'
+        ]);
+
+        $prereq = auth()->user()->weddingPrerequisite;
+        $user = auth()->user();
+
+        // Rename file
+        $extension = $request->file('file')->getClientOriginalExtension();
+        $timestamp = now()->timestamp;
+        $filename = "{$user->id}_{$request->type}_{$timestamp}.{$extension}";
+
+        // Store file
+        $path = $request->file('file')->storeAs(
+            'prerequisite_docs',
+            $filename,
+            'public'
+        );
+
+        // Determine expiry (only HIV)
+        $expiresAt = null;
+        if ($request->type === 'hiv') {
+            $expiresAt = now()->addMonths(6); // standard validity
+        }
+
+        // Save in database
+        $prereq->documents()->create([
+            'type' => $request->type,
+            'file_path' => $path,
+            'original_name' => $filename,
+            'uploaded_at' => now(),
+            'expires_at' => $expiresAt,
+        ]);
+
+        return back()->with('success', 'Dokumen berjaya dimuat naik!');
+    }
+
 }

@@ -5,10 +5,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WeddingDetailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\WeddingPrerequisiteController;
 
-// ---------------------------
-// PUBLIC PAGES
-// ---------------------------
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTES
+|--------------------------------------------------------------------------
+*/
 
 // Landing page
 Route::get('/', function () {
@@ -27,54 +30,118 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-// ---------------------------
-// PROTECTED ROUTES (User must be logged in)
-// ---------------------------
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATED USER ROUTES
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
 
-    // Client dashboard
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARDS
+    |--------------------------------------------------------------------------
+    */
+
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // ⭐ Wedding Setup Routes (ADD HERE)
-    Route::get('/wedding/setup', [WeddingDetailController::class, 'create']);
-    Route::post('/wedding/setup', [WeddingDetailController::class, 'store']);
-
-    // Vendor dashboard
     Route::get('/vendor', function () {
         return "Vendor Dashboard (coming soon)";
     })->name('vendor.dashboard');
 
-    // Admin dashboard
     Route::get('/admin', function () {
         return "Admin Panel (coming soon)";
     })->name('admin.dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'index']);
 
-    Route::post('/profile/update', [ProfileController::class, 'updateProfile']);
-    Route::post('/profile/wedding', [ProfileController::class, 'updateWedding']);
+    /*
+    |--------------------------------------------------------------------------
+    | WEDDING SETUP
+    |--------------------------------------------------------------------------
+    */
 
-    Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
-    Route::get('/vendors/search', [VendorController::class, 'search'])->name('vendors.search');
-    Route::get('/vendors/fetch/{id}', [VendorController::class, 'fetch'])->name('vendors.fetch');
-    Route::get('/vendors/{id}', [VendorController::class, 'show'])->name('vendors.show');
-    // routes/web.php
-    // Route::get('/vendors/fetch/{id}', [VendorController::class, 'fetch'])->name('vendors.fetch');
+    Route::get('/wedding/setup', [WeddingDetailController::class, 'create'])
+        ->name('wedding.setup');
 
-
-    Route::get('/myvendors', [VendorController::class, 'myVendors'])->middleware('auth');
-    Route::post('/myvendors/add', [VendorController::class, 'storeUserVendor']);
-    Route::delete('/myvendors/delete/{id}', [VendorController::class, 'deleteuservendor'])->name('vendors.delete');
-    Route::put('/myvendors/update/{id}', [VendorController::class, 'updateBooking'])->name('vendors.update');
-    Route::post('/myvendors/rate/{booking}', [VendorController::class, 'rate'])->name('vendors.rate');
+    Route::post('/wedding/setup', [WeddingDetailController::class, 'store'])
+        ->name('wedding.store');
 
 
-    // Search vendors (AJAX for Add Vendor modal)
+    /*
+    |--------------------------------------------------------------------------
+    | PROFILE
+    |--------------------------------------------------------------------------
+    */
 
-    // Route::get('/vendors/search', [VendorController::class, 'search'])->name('vendors.search');
+    Route::get('/profile', [ProfileController::class, 'index'])
+        ->name('profile.index');
+
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile'])
+        ->name('profile.update');
+
+    Route::post('/profile/wedding', [ProfileController::class, 'updateWedding'])
+        ->name('profile.wedding');
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | VENDORS
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/vendors', [VendorController::class, 'index'])
+        ->name('vendors.index');
+
+    Route::get('/vendors/search', [VendorController::class, 'search'])
+        ->name('vendors.search');
+
+    Route::get('/vendors/fetch/{id}', [VendorController::class, 'fetch'])
+        ->name('vendors.fetch');
+
+    Route::get('/vendors/{id}', [VendorController::class, 'show'])
+        ->name('vendors.show');
+
+    Route::get('/myvendors', [VendorController::class, 'myVendors'])
+        ->name('vendors.my');
+
+    Route::post('/myvendors/add', [VendorController::class, 'storeUserVendor'])
+        ->name('vendors.add');
+
+    Route::delete('/myvendors/delete/{id}', [VendorController::class, 'deleteuservendor'])
+        ->name('vendors.delete');
+
+    Route::put('/myvendors/update/{id}', [VendorController::class, 'updateBooking'])
+        ->name('vendors.update');
+
+    Route::post('/myvendors/rate/{booking}', [VendorController::class, 'rate'])
+        ->name('vendors.rate');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRA-NIKAH CHECKLIST (DB-DRIVEN)
+    |--------------------------------------------------------------------------
+    */
+
+    // View checklist
+    Route::get('/preweddingpreparation', [WeddingPrerequisiteController::class, 'index'])
+        ->name('preweddingpreparation.index');
+
+    // Update a step (mark completed / submitted)
+    Route::post('/preweddingpreparation/{prerequisite}', 
+        [WeddingPrerequisiteController::class, 'update'])
+        ->name('preweddingpreparation.update');
+
+    // Upload document for a step
+    Route::post('/preweddingpreparation/{prerequisite}/upload',
+        [WeddingPrerequisiteController::class, 'uploadDocument'])
+        ->name('preweddingpreparation.upload');
+
+    // Delete uploaded document
+    Route::delete('/preweddingpreparation/document/{document}',
+        [WeddingPrerequisiteController::class, 'deleteDocument'])
+        ->name('preweddingpreparation.document.delete');
 
 });

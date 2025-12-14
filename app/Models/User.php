@@ -47,4 +47,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(VendorRating::class);
     }
+
+    public function weddingPrerequisite()
+    {
+        return $this->hasOne(WeddingPrerequisite::class);
+    }
+
+    
 }
