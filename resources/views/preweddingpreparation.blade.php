@@ -89,7 +89,7 @@
                                     class="flex items-center gap-2 text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border"
                                     title="{{ $doc->original_name }}"
                                 >
-                                    📎
+                                    
                                     <span class="truncate max-w-[200px]">
                                         {{ $doc->original_name }}
                                     </span>
