@@ -22,8 +22,8 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Total Bookings</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">0</p>
-                    <p class="text-xs text-gray-400 mt-2">This month: 0</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $totalBookings }}</p>
+                    <p class="text-xs text-gray-400 mt-2">All bookings</p>
                 </div>
                 <div class="text-4xl text-blue-100">📅</div>
             </div>
@@ -34,12 +34,12 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Pending Requests</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $pendingBookings }}</p>
                     <p class="text-xs text-gray-400 mt-2">Awaiting response</p>
                 </div>
                 <div class="text-4xl text-yellow-100">⏳</div>
             </div>
-            <a href="#" class="mt-3 text-yellow-600 text-sm font-semibold hover:underline">Review → </a>
+            <a href="{{ route('vendor.bookings.index') }}" class="mt-3 text-yellow-600 text-sm font-semibold hover:underline">Review → </a>
         </div>
 
         <!-- Total Reviews -->
@@ -76,33 +76,61 @@
         <div class="lg:col-span-2 bg-white rounded-lg shadow overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Recent Bookings</h2>
-                <a href="#" class="text-indigo-600 text-sm font-semibold hover:underline">View All →</a>
+                <a href="{{ route('vendor.bookings.index') }}" class="text-indigo-600 text-sm font-semibold hover:underline">View All →</a>
             </div>
             <div class="divide-y max-h-96 overflow-y-auto">
+                @if($bookings->count() === 0)
                 <!-- No Bookings State -->
                 <div class="px-6 py-12 text-center">
                     <div class="text-5xl mb-3">📭</div>
                     <p class="text-gray-500 font-medium">No bookings yet</p>
                     <p class="text-gray-400 text-sm mt-1">Your bookings will appear here</p>
-                    <a href="#" class="mt-4 inline-block px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 text-sm font-semibold">
+                    <a href="{{ route('vendor.bookings.index') }}" class="mt-4 inline-block px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 text-sm font-semibold">
                         View Your Listings
                     </a>
                 </div>
-
-                <!-- Sample Booking Item (Hidden when no bookings) -->
-                <div class="px-6 py-4 hover:bg-gray-50 hidden">
+                @else
+                <!-- Bookings List -->
+                @foreach($bookings as $booking)
+                <div class="px-6 py-4 hover:bg-gray-50 transition">
                     <div class="flex items-start justify-between mb-2">
                         <div>
-                            <p class="font-semibold text-gray-900">Wedding - Ahmad & Fatimah</p>
-                            <p class="text-sm text-gray-500 mt-1">📅 15 Jan 2024 • 👥 200 guests</p>
+                            <p class="font-semibold text-gray-900">Wedding - {{ $booking->user->name }}</p>
+                            <p class="text-sm text-gray-500 mt-1">📧 {{ $booking->user->email }}</p>
                         </div>
-                        <span class="px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800">Confirmed</span>
+                        <span class="px-2 py-1 text-xs font-semibold rounded 
+                            @if($booking->status === 'prospect') bg-gray-100 text-gray-800
+                            @elseif($booking->status === 'contacted') bg-blue-100 text-blue-800
+                            @elseif($booking->status === 'ready') bg-yellow-100 text-yellow-800
+                            @else bg-green-100 text-green-800
+                            @endif">
+                            {{ ucfirst($booking->status) }}
+                        </span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
-                        <p class="text-gray-600">Package: Premium (5 hours)</p>
-                        <p class="font-semibold text-gray-900">RM 3,500</p>
+                        <div>
+                            @if($booking->agreed_price)
+                                <p class="text-gray-600">Agreed Price: RM {{ number_format($booking->agreed_price, 2) }}</p>
+                            @endif
+                            @if($booking->days_until_wedding !== null)
+                                <p class="font-semibold text-gray-900">
+                                    @if($booking->days_until_wedding > 0)
+                                        {{ $booking->days_until_wedding }} days left
+                                    @elseif($booking->days_until_wedding == 0)
+                                        TODAY!
+                                    @else
+                                        Wedding passed
+                                    @endif
+                                </p>
+                            @endif
+                        </div>
+                        <a href="{{ route('vendor.bookings.index') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-semibold">
+                            Manage
+                        </a>
                     </div>
                 </div>
+                @endforeach
+                @endif
             </div>
         </div>
 
@@ -112,19 +140,19 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
                 <div class="space-y-3">
-                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg border-2 border-indigo-200 hover:bg-indigo-50 hover:border-indigo-400 transition">
+                    <a href="{{ route('vendor.profile.edit') }}" class="flex items-center gap-3 p-3 rounded-lg border-2 border-indigo-200 hover:bg-indigo-50 hover:border-indigo-400 transition">
                         <span class="text-2xl">📝</span>
                         <span class="text-sm font-semibold text-gray-700">Edit Profile</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 transition">
+                    <a href="{{ route('vendor.gallery.index') }}" class="flex items-center gap-3 p-3 rounded-lg border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 transition">
                         <span class="text-2xl">🖼️</span>
                         <span class="text-sm font-semibold text-gray-700">Manage Gallery</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg border-2 border-green-200 hover:bg-green-50 hover:border-green-400 transition">
+                    <a href="{{ route('vendor.pricing.index') }}" class="flex items-center gap-3 p-3 rounded-lg border-2 border-green-200 hover:bg-green-50 hover:border-green-400 transition">
                         <span class="text-2xl">💰</span>
                         <span class="text-sm font-semibold text-gray-700">Update Pricing</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg border-2 border-purple-200 hover:bg-purple-50 hover:border-purple-400 transition">
+                    <a href="{{ route('vendor.analytics') }}" class="flex items-center gap-3 p-3 rounded-lg border-2 border-purple-200 hover:bg-purple-50 hover:border-purple-400 transition">
                         <span class="text-2xl">📊</span>
                         <span class="text-sm font-semibold text-gray-700">View Analytics</span>
                     </a>
@@ -155,40 +183,40 @@
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-gray-700">Profile Views</span>
-                        <span class="text-sm font-bold text-gray-900">0</span>
+                        <span class="text-sm font-bold text-gray-900">{{ $profileViews }}</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-indigo-500 h-2 rounded-full" style="width: 0%"></div>
+                        <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ min($profileViews / 10, 100) }}%"></div>
                     </div>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-gray-700">Booking Rate</span>
-                        <span class="text-sm font-bold text-gray-900">0%</span>
+                        <span class="text-sm font-bold text-gray-900">{{ $bookingRate }}%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                        <div class="bg-green-500 h-2 rounded-full" style="width: {{ $bookingRate }}%"></div>
                     </div>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-gray-700">Response Time</span>
-                        <span class="text-sm font-bold text-gray-900">N/A</span>
+                        <span class="text-sm font-medium text-gray-700">Bookings Confirmed</span>
+                        <span class="text-sm font-bold text-gray-900">{{ $totalBookings }}</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 0%"></div>
+                        <div class="bg-yellow-500 h-2 rounded-full" style="width: {{ min($totalBookings * 10, 100) }}%"></div>
                     </div>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-gray-700">Customer Rating</span>
-                        <span class="text-sm font-bold text-gray-900">5.0 ⭐</span>
+                        <span class="text-sm font-bold text-gray-900">{{ $customerRating }} ⭐</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-purple-500 h-2 rounded-full" style="width: 100%"></div>
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: {{ ($customerRating / 5) * 100 }}%"></div>
                     </div>
                 </div>
             </div>

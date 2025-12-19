@@ -18,6 +18,11 @@ RUN docker-php-ext-install pdo pdo_pgsql zip
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Increase PHP upload limits
+RUN echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Set workdir
 WORKDIR /var/www
 

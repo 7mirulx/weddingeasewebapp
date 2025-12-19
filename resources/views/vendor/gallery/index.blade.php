@@ -8,6 +8,53 @@
         <h2 class="text-2xl font-bold text-indigo-700 mb-6">Gallery Management</h2>
 
         <!-- Upload Section -->
+
+        
+        <!-- Banner Upload Section -->
+        <div class="mb-8 p-6 border-2 border-dashed border-purple-300 rounded-lg bg-purple-50">
+            <h3 class="text-lg font-semibold text-purple-700 mb-4">Upload Banner Image</h3>
+            <p class="text-gray-600 mb-4">JPG, PNG, WebP • Max 5MB • Recommended size: 1200x400px</p>
+
+            <form id="banner-upload-form" action="{{ route('vendor.banner.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                @csrf
+                <input type="file" 
+                    id="banner" 
+                    name="banner" 
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    required>
+                
+                <button type="submit" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition">
+                    Upload Banner
+                </button>
+            </form>
+
+            @error('banner')
+                <div class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {{ $message }}
+                </div>
+            @enderror
+
+            @if($vendor->banner_url)
+                <div class="mt-6 p-4 bg-gray-100 rounded-lg">
+                    <p class="text-sm text-gray-600 mb-3">Current Banner:</p>
+                    <img src="{{ asset('image/' . $vendor->banner_url) }}" 
+                        alt="Banner" 
+                        class="w-full h-40 object-cover rounded-lg shadow">
+                    <form action="{{ route('vendor.banner.delete') }}" 
+                        method="POST" 
+                        class="mt-3"
+                        onsubmit="return confirm('Delete this banner?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">
+                            Delete Banner
+                        </button>
+                    </form>
+                </div>
+            @endif
+        </div>
+
         <div class="mb-8 p-6 border-2 border-dashed border-indigo-300 rounded-lg bg-indigo-50">
             <h3 class="text-lg font-semibold text-indigo-700 mb-4">Upload New Image</h3>
             <p class="text-gray-600 mb-4">Max 4 images • JPG, PNG, GIF • Max 2MB per image</p>
@@ -73,6 +120,7 @@
 </div>
 
 <script>
+    // Gallery upload handler
     document.getElementById('gallery-upload-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -121,6 +169,56 @@
         })
         .catch(error => {
             alert('Error uploading image: ' + error.message);
+        });
+    });
+
+    // Banner upload handler
+    document.getElementById('banner-upload-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('banner');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select a banner image');
+            return;
+        }
+        
+        // Check file size (5MB = 5242880 bytes)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('Banner is too large! Maximum file size is 5MB.\n\nYour file: ' + (file.size / 1024 / 1024).toFixed(2) + 'MB');
+            return;
+        }
+        
+        // Check file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Invalid file type! Only JPG, PNG, and WebP are allowed.');
+            return;
+        }
+        
+        const formData = new FormData(this);
+        
+        fetch('{{ route("vendor.banner.store") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Banner uploaded successfully!');
+                window.location.reload();
+            } else {
+                alert('Error uploading banner: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            alert('Error uploading banner: ' + error.message);
         });
     });
 </script>

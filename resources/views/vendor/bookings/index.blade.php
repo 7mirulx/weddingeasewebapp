@@ -67,12 +67,10 @@
                                             @if($booking->status === 'prospect') border-gray-400 bg-gray-100
                                             @elseif($booking->status === 'contacted') border-blue-400 bg-blue-50
                                             @elseif($booking->status === 'ready') border-yellow-400 bg-yellow-50
-                                            @elseif($booking->status === 'completed') border-green-400 bg-green-50
                                             @endif">
                                             <option value="prospect" {{ $booking->status === 'prospect' ? 'selected' : '' }}>Prospect</option>
                                             <option value="contacted" {{ $booking->status === 'contacted' ? 'selected' : '' }}>Contacted</option>
                                             <option value="ready" {{ $booking->status === 'ready' ? 'selected' : '' }}>Ready</option>
-                                            <option value="completed" {{ $booking->status === 'completed' ? 'selected' : '' }}>Completed</option>
                                         </select>
                                     </form>
                                 </td>

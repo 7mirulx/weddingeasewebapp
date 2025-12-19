@@ -26,7 +26,7 @@ class VendorController extends Controller
             ->when($request->city, fn($q) =>
                 $q->where('city', $request->city)
             )
-            ->whereNull('owner_user_id') // only official vendors
+            ->whereNotNull('owner_user_id') // only claimed vendors
             ->paginate(12);
 
         $categories = Vendor::select('category')->distinct()->get();
@@ -53,7 +53,7 @@ class VendorController extends Controller
             ->when($request->city, fn($q) =>
                 $q->where('city', $request->city)
             )
-            ->whereNull('owner_user_id') // only official vendors
+            ->whereNotNull('owner_user_id') // only claimed vendors
             ->get();
 
         $bookedVendorIds = auth()->user()->bookings->pluck('vendor_id')->toArray();
@@ -652,6 +652,90 @@ class VendorController extends Controller
         }
 
         return response()->json(['error' => 'Image not found'], 404);
+    }
+
+    public function uploadBanner(Request $request)
+    {
+        try {
+            $vendor = Vendor::where('owner_user_id', auth()->id())->first();
+            
+            if (!$vendor) {
+                return response()->json(['error' => 'Vendor not found'], 404);
+            }
+
+            // Validate image
+            $request->validate([
+                'banner' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120'
+            ]);
+
+            // Check if file exists
+            if (!$request->hasFile('banner') || !$request->file('banner')->isValid()) {
+                return response()->json(['error' => 'Invalid image file'], 422);
+            }
+
+            // Delete old banner if it exists
+            if ($vendor->banner_url && file_exists(public_path('image/' . $vendor->banner_url))) {
+                unlink(public_path('image/' . $vendor->banner_url));
+            }
+
+            // Store the file with vendor_name as filename
+            $file = $request->file('banner');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $vendor->vendor_name . '.' . $extension;
+            
+            // Move file directly to public/image directory
+            $destination = public_path('image');
+            if (!is_dir($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            $file->move($destination, $filename);
+            
+            // Verify file was uploaded
+            if (!file_exists(public_path('image/' . $filename))) {
+                return response()->json(['error' => 'Failed to store banner'], 500);
+            }
+            
+            // Update vendor banner_url with just the filename
+            $vendor->update(['banner_url' => $filename]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Banner uploaded successfully',
+                'path' => asset('image/' . $filename)
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => $e->errors()['banner'][0] ?? 'Validation failed'], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteBanner(Request $request)
+    {
+        try {
+            $vendor = Vendor::where('owner_user_id', auth()->id())->first();
+            
+            if (!$vendor) {
+                return response()->json(['error' => 'Vendor not found'], 404);
+            }
+
+            // Delete the banner file from storage if it exists
+            if ($vendor->banner_url) {
+                $filePath = 'public/image/' . $vendor->banner_url;
+                if (file_exists(public_path('image/' . $vendor->banner_url))) {
+                    unlink(public_path('image/' . $vendor->banner_url));
+                }
+            }
+
+            // Update vendor to remove banner_url
+            $vendor->update(['banner_url' => null]);
+
+            return response()->json(['success' => true]);
+            
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     public function vendorPricing()

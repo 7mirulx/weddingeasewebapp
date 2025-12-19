@@ -65,7 +65,17 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::get('/vendor', function () {
-        return view('vendor.dashboard');
+        $vendor = \App\Models\Vendor::where('owner_user_id', auth()->id())->first();
+        $bookings = $vendor ? $vendor->bookings()->with('user')->latest()->take(5)->get() : collect();
+        $totalBookings = $vendor ? $vendor->bookings()->count() : 0;
+        $pendingBookings = $vendor ? $vendor->bookings()->where('status', 'prospect')->count() : 0;
+        
+        // Performance metrics
+        $profileViews = $vendor ? ($vendor->profile_views ?? 0) : 0;
+        $bookingRate = $totalBookings > 0 && $profileViews > 0 ? round(($totalBookings / $profileViews) * 100, 1) : 0;
+        $customerRating = $vendor ? ($vendor->rating_average ?? 0) : 0;
+        
+        return view('vendor.dashboard', compact('bookings', 'totalBookings', 'pendingBookings', 'profileViews', 'bookingRate', 'customerRating'));
     })->name('vendor.dashboard');
 
     Route::prefix('vendor')->name('vendor.')->group(function () {
@@ -77,6 +87,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/gallery', [VendorController::class, 'vendorGallery'])->name('gallery.index');
         Route::post('/gallery', [VendorController::class, 'uploadGalleryImage'])->name('gallery.store');
         Route::delete('/gallery/{id}', [VendorController::class, 'deleteGalleryImage'])->name('gallery.delete');
+        Route::post('/banner', [VendorController::class, 'uploadBanner'])->name('banner.store');
+        Route::delete('/banner', [VendorController::class, 'deleteBanner'])->name('banner.delete');
         Route::get('/pricing', [VendorController::class, 'vendorPricing'])->name('pricing.index');
         Route::post('/pricing', [VendorController::class, 'updatePricing'])->name('pricing.update');
         Route::get('/reviews', [VendorController::class, 'vendorReviews'])->name('reviews.index');
