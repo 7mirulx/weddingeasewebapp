@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Dashboard - Jom Kahwin</title>
+<title>Vendor Dashboard - Wedding Ease</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-indigo-50 min-h-screen flex">
@@ -13,7 +13,7 @@
 
             <!-- TOP SECTION -->
             <div class="pt-6 px-6 pb-4 border-b border-indigo-200">
-                <h1 class="text-xl font-bold text-indigo-700">Jom Kahwin</h1>
+            <h1 class="text-xl font-bold text-indigo-700">Wedding Ease</h1>
                 <p class="text-xs text-indigo-500 font-semibold mt-1">VENDOR PANEL</p>
             </div>
 

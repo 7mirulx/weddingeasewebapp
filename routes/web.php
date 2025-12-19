@@ -166,6 +166,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/myvendors/rate/{booking}', [VendorController::class, 'rate'])
         ->name('vendors.rate');
 
+    Route::post('/bookings/create', [VendorController::class, 'createBooking'])
+        ->name('bookings.create');
+
 
     /*
     |--------------------------------------------------------------------------

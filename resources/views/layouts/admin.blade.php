@@ -13,7 +13,7 @@
 
             <!-- TOP SECTION -->
             <div class="pt-6 px-6 pb-4 border-b border-pink-200">
-                <h1 class="text-xl font-bold text-rose-700">Jom Kahwin</h1>
+                <h1 class="text-xl font-bold text-rose-700">Wedding Ease</h1>
                 <p class="text-xs text-rose-500 font-semibold mt-1">ADMIN PANEL</p>
             </div>
 

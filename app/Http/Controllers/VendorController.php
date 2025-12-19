@@ -799,6 +799,62 @@ class VendorController extends Controller
         return view('vendor.settings', compact('vendor'));
     }
 
+    // CREATE BOOKING FROM BROWSE PAGE
+    public function createBooking(Request $request)
+    {
+        // Only authenticated users can book
+        if (!auth()->check()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You must be logged in to book a vendor'
+            ], 401);
+        }
+
+        try {
+            $validated = $request->validate([
+                'vendor_id' => 'required|exists:vendors,id',
+            ]);
+
+            // Check if already booked
+            $existing = Booking::where('user_id', auth()->id())
+                ->where('vendor_id', $validated['vendor_id'])
+                ->first();
+
+            if ($existing) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You have already booked this vendor'
+                ], 422);
+            }
+
+            // Create booking
+            $booking = Booking::create([
+                'user_id' => auth()->id(),
+                'vendor_id' => $validated['vendor_id'],
+                'status' => 'prospect',
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Vendor booked successfully!',
+                'vendor_id' => $validated['vendor_id'],
+                'booking_id' => $booking->id
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create booking: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 }
+
 

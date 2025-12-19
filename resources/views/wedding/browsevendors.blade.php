@@ -74,8 +74,8 @@
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Category</label>
                 <select id="categoryInput" class="w-full border-2 border-pink-200 rounded-lg p-3 focus:outline-none focus:border-rose-500 transition" onchange="applyFilters()">
                     <option value="">All Categories</option>
-                    @foreach($categories as $c)
-                        <option value="{{ $c->category }}">{{ $c->category }}</option>
+                    @foreach(config('vendor_categories') as $id => $name)
+                        <option value="{{ $id }}">{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -145,7 +145,11 @@
                 </h3>
 
                 <p class="text-sm text-gray-600 font-semibold mb-1">
-                    {{ $vendor->category }}
+                    @php
+                        $serviceIds = is_array($vendor->service_ids) ? $vendor->service_ids : json_decode($vendor->service_ids, true) ?? [];
+                        $categoryNames = array_map(fn($id) => config('vendor_categories.' . $id, ''), $serviceIds);
+                    @endphp
+                    {{ implode(', ', array_filter($categoryNames)) }}
                 </p>
 
                 <p class="text-xs text-gray-500 mb-3 flex items-center gap-1">
@@ -504,14 +508,10 @@ function modalManager() {
 
             const formData = new FormData();
             formData.append('_token', '{{ csrf_token() }}');
-            formData.append('vendor_name', this.selectedVendor.vendor_name);
-            formData.append('starting_price', this.selectedVendor.starting_price);
-            formData.append('phone', this.selectedVendor.phone);
-            formData.append('email', this.selectedVendor.email);
-            formData.append('description', this.selectedVendor.description);
+            formData.append('vendor_id', this.selectedVendor.id);
 
             try {
-                const res = await fetch('/myvendors/add', {
+                const res = await fetch('/bookings/create', {
                     method: 'POST',
                     body: formData,
                     headers: {

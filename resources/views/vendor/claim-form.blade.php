@@ -1,4 +1,4 @@
-@extends('layouts.userapp')
+@extends('layouts.public')
 
 @section('page-title', 'Claim Your Business')
 
