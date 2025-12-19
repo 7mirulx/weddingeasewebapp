@@ -1,3 +1,9 @@
+@extends('layouts.userapp')
+
+@section('page-title', 'Dashboard')
+
+@section('content')
+
 @php
     $firstName = explode(' ', trim(auth()->user()->name))[0];
     $wedding   = auth()->user()->weddingDetails;
@@ -22,9 +28,6 @@
     })->values();
 @endphp
 
-@extends('layouts.userapp')
-
-@section('content')
 <div class="p-10">
 
     {{-- ✅ SUCCESS MODAL --}}

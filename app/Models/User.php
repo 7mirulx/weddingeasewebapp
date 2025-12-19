@@ -53,5 +53,14 @@ class User extends Authenticatable
         return $this->hasOne(WeddingPrerequisite::class);
     }
 
-    
+    // ADMIN RELATIONSHIPS
+    public function ownershipRequests()
+    {
+        return $this->hasMany(VendorOwnershipRequest::class);
+    }
+
+    public function reviewedRequests()
+    {
+        return $this->hasMany(VendorOwnershipRequest::class, 'reviewed_by');
+    }
 }

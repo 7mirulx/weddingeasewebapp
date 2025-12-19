@@ -150,4 +150,26 @@ class WeddingPrerequisiteController extends Controller
             'message' => 'Document deleted successfully.',
         ]);
     }
+
+    /**
+     * Download a document file.
+     */
+    public function downloadDocument(WeddingPrerequisiteDocument $document)
+    {
+        // Ensure ownership
+        if ($document->prerequisite->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Verify file exists
+        if (!Storage::disk('public')->exists($document->file_path)) {
+            abort(404, 'File not found.');
+        }
+
+        // Download the file
+        return Storage::disk('public')->download(
+            $document->file_path,
+            $document->original_name
+        );
+    }
 }

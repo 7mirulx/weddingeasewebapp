@@ -14,9 +14,9 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Admin User',
+            'name' => 'Admin',
             'role' => 'admin',
-            'email' => 'admin@example.com',
+            'email' => 'admin@admin.com',
             'password' => Hash::make('password'),
         ]);
 
@@ -33,8 +33,6 @@ class UsersTableSeeder extends Seeder
             'role' => 'vendor',
             'email' => 'vendor@example.com',
             'phone' => '0198765432',
-            'business_name' => 'Vendor Co',
-            'business_address' => '123 Jalan Vendor, Bandar, State',
             'password' => Hash::make('password'),
         ]);
     }

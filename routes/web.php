@@ -6,6 +6,12 @@ use App\Http\Controllers\WeddingDetailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WeddingPrerequisiteController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\VendorController as AdminVendorController;
+use App\Http\Controllers\Admin\OwnershipRequestController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +21,19 @@ use App\Http\Controllers\WeddingPrerequisiteController;
 
 // Landing page
 Route::get('/', function () {
-    return view('landing');
+    $vendors = \App\Models\Vendor::where('status', 'active')
+        ->inRandomOrder()
+        ->limit(12)
+        ->get();
+    return view('landing', compact('vendors'));
 })->name('home');
+
+// Claim Your Business - Public Pages
+Route::get('/claim-business', [VendorController::class, 'claimLanding'])->name('vendor.claim-landing');
+Route::get('/vendor/claim', [VendorController::class, 'showClaimForm'])->name('vendor.claim');
+Route::post('/vendor/claim/payment', [VendorController::class, 'processPayment'])->name('vendor.claim.process-payment');
+Route::post('/vendor/claim', [VendorController::class, 'processClaim'])->name('vendor.claim.process');
+Route::get('/vendor/claim/success', [VendorController::class, 'claimSuccess'])->name('vendor.claim.success');
 
 // Register
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -48,8 +65,24 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::get('/vendor', function () {
-        return "Vendor Dashboard (coming soon)";
+        return view('vendor.dashboard');
     })->name('vendor.dashboard');
+
+    Route::prefix('vendor')->name('vendor.')->group(function () {
+        Route::get('/profile/edit', [VendorController::class, 'editProfile'])->name('profile.edit');
+        Route::post('/profile/update', [VendorController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/bookings', [VendorController::class, 'vendorBookings'])->name('bookings.index');
+        Route::post('/bookings/{booking}/status', [VendorController::class, 'updateBookingStatus'])->name('bookings.update-status');
+        Route::post('/bookings/{booking}/agreed-price', [VendorController::class, 'updateAgreedPrice'])->name('bookings.update-price');
+        Route::get('/gallery', [VendorController::class, 'vendorGallery'])->name('gallery.index');
+        Route::post('/gallery', [VendorController::class, 'uploadGalleryImage'])->name('gallery.store');
+        Route::delete('/gallery/{id}', [VendorController::class, 'deleteGalleryImage'])->name('gallery.delete');
+        Route::get('/pricing', [VendorController::class, 'vendorPricing'])->name('pricing.index');
+        Route::post('/pricing', [VendorController::class, 'updatePricing'])->name('pricing.update');
+        Route::get('/reviews', [VendorController::class, 'vendorReviews'])->name('reviews.index');
+        Route::get('/analytics', [VendorController::class, 'vendorAnalytics'])->name('analytics');
+        Route::get('/settings', [VendorController::class, 'vendorSettings'])->name('settings');
+    });
 
     Route::get('/admin', function () {
         return "Admin Panel (coming soon)";
@@ -93,6 +126,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/vendors', [VendorController::class, 'index'])
         ->name('vendors.index');
+
+    Route::get('/vendors/filter', [VendorController::class, 'filterVendors'])
+        ->name('vendors.filter');
 
     Route::get('/vendors/search', [VendorController::class, 'search'])
         ->name('vendors.search');
@@ -144,4 +180,52 @@ Route::middleware('auth')->group(function () {
         [WeddingPrerequisiteController::class, 'deleteDocument'])
         ->name('preweddingpreparation.document.delete');
 
+    // Download document
+    Route::get('/documents/{document}/download',
+        [WeddingPrerequisiteController::class, 'downloadDocument'])
+        ->name('documents.download');
 });
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Vendors Management
+    Route::get('/vendors', [AdminVendorController::class, 'index'])->name('vendors.index');
+    Route::get('/vendors/create', [AdminVendorController::class, 'create'])->name('vendors.create');
+    Route::post('/vendors', [AdminVendorController::class, 'store'])->name('vendors.store');
+    Route::get('/vendors/{vendor}/edit', [AdminVendorController::class, 'edit'])->name('vendors.edit');
+    Route::put('/vendors/{vendor}', [AdminVendorController::class, 'update'])->name('vendors.update');
+    Route::post('/vendors/{vendor}/toggle-status', [AdminVendorController::class, 'toggleStatus'])->name('vendors.toggle-status');
+    Route::post('/vendors/{vendor}/toggle-featured', [AdminVendorController::class, 'toggleFeatured'])->name('vendors.toggle-featured');
+    Route::post('/vendors/{vendor}/assign-owner', [AdminVendorController::class, 'assignOwner'])->name('vendors.assign-owner');
+    Route::post('/vendors/{vendor}/send-claim-invite', [AdminVendorController::class, 'sendClaimInvite'])->name('vendors.send-claim-invite');
+    Route::post('/vendors/{vendor}/generate-token', [AdminVendorController::class, 'generateClaimToken'])->name('vendors.generate-token');
+    Route::post('/vendors/contact-business', [AdminVendorController::class, 'contactBusiness'])->name('vendors.contact-business');
+
+    // Ownership Requests
+    Route::get('/ownership-requests', [OwnershipRequestController::class, 'index'])->name('ownership-requests.index');
+    Route::get('/ownership-requests/{vendorOwnershipRequest}', [OwnershipRequestController::class, 'show'])->name('ownership-requests.show');
+    Route::post('/ownership-requests/{vendorOwnershipRequest}/approve', [OwnershipRequestController::class, 'approve'])->name('ownership-requests.approve');
+    Route::post('/ownership-requests/{vendorOwnershipRequest}/reject', [OwnershipRequestController::class, 'reject'])->name('ownership-requests.reject');
+
+    // Users Management
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+    // Bookings Management
+    Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
+
+    // Settings Management
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/categories', [SettingsController::class, 'updateCategories'])->name('settings.categories');
+    Route::post('/settings/email-sender', [SettingsController::class, 'updateEmailSender'])->name('settings.email-sender');
+});
+

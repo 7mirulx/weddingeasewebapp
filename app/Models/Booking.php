@@ -12,8 +12,10 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'vendor_id',
+        'status',
         'payment_progress',
         'is_completed',
+        'agreed_price',
     ];
 
     protected $casts = [
@@ -38,5 +40,23 @@ class Booking extends Model
     public function rating()
     {
         return $this->hasOne(VendorRating::class);
+    }
+
+    public function weddingDetails()
+    {
+        return $this->user->weddingDetails();
+    }
+
+    /**
+     * Get days until wedding date
+     */
+    public function getDaysUntilWedding()
+    {
+        $weddingDate = $this->user->weddingDetails?->wedding_date;
+        if (!$weddingDate) {
+            return null;
+        }
+        
+        return now()->diffInDays(\Carbon\Carbon::parse($weddingDate), false);
     }
 }

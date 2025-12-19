@@ -1,5 +1,7 @@
 @extends('layouts.userapp')
 
+@section('page-title', 'Wedding Setup')
+
 @section('content')
 <div>
 

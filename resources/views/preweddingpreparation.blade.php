@@ -1,5 +1,7 @@
 @extends('layouts.userapp')
 
+@section('page-title', 'Pre-Wedding Checklist')
+
 @section('content')
 <div class="max-w-6xl mx-auto py-10">
 
@@ -76,7 +78,25 @@
                     </p>
 
                     @if ($item->isCompleted())
-                        <span class="text-green-600 font-semibold text-sm">Completed</span>
+                        <div class="space-y-3">
+                            <span class="text-green-600 font-semibold text-sm">✓ Completed</span>
+                            @if ($item->documents->count())
+                                @php $doc = $item->documents->last(); @endphp
+
+                                <div
+                                    class="flex items-center gap-2 text-sm text-gray-700 bg-green-50 px-3 py-2 rounded-lg border border-green-200"
+                                    title="{{ $doc->original_name }}"
+                                >
+                                    <span class="truncate max-w-[200px]">{{ $doc->original_name }}</span>
+                                    <a href="/documents/{{ $doc->id }}/download" 
+                                       class="ml-auto text-green-600 hover:text-green-700 font-semibold flex-shrink-0"
+                                       title="Download document"
+                                       download>
+                                        ⬇
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
 
                     @elseif ($item->is_active)
                         <div class="space-y-3">
@@ -89,10 +109,15 @@
                                     class="flex items-center gap-2 text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border"
                                     title="{{ $doc->original_name }}"
                                 >
-                                    
                                     <span class="truncate max-w-[200px]">
                                         {{ $doc->original_name }}
                                     </span>
+                                    <a href="/documents/{{ $doc->id }}/download" 
+                                       class="ml-auto text-pink-600 hover:text-pink-700 font-semibold flex-shrink-0"
+                                       title="Download document"
+                                       download>
+                                        ⬇️
+                                    </a>
                                 </div>
                             @endif
 
