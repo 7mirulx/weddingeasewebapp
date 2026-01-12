@@ -78,7 +78,7 @@
                 </div>
 
                 <!-- SETTINGS SECTION -->
-                <div class="mt-4 pt-4 border-t border-pink-200 space-y-1">
+                <!-- <div class="mt-4 pt-4 border-t border-pink-200 space-y-1">
                     <p class="px-4 py-2 text-xs font-bold text-rose-600 uppercase tracking-wide">Configuration</p>
                     
                     <a href="{{ route('admin.settings.index') }}"
@@ -89,7 +89,7 @@
                         </svg>
                         <span>Settings</span>
                     </a>
-                </div>
+                </div> -->
 
             </nav>
 
