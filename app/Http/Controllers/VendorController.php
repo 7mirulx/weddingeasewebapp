@@ -16,7 +16,7 @@ class VendorController extends Controller
     // ================================
     public function index(Request $request)
     {
-        $vendors = Vendor::with('reviews.user')
+        $vendors = Vendor::with('reviews')
             ->when($request->search, fn($q) =>
                 $q->where('vendor_name', 'ILIKE', "%{$request->search}%")
             )
@@ -42,8 +42,8 @@ class VendorController extends Controller
             return response()->json(['error' => 'Invalid request'], 400);
         }
 
-        $vendors = Vendor::select('id', 'vendor_name', 'category', 'city', 'state', 'starting_price', 'banner_url', 'rating_average', 'rating_count', 'description', 'phone', 'email')
-            ->with('reviews.user')
+        $vendors = Vendor::select('id', 'vendor_name', 'category', 'city', 'state', 'starting_price', 'banner_url', 'rating_average', 'rating_count', 'description', 'phone', 'email', 'service_ids')
+            ->with('reviews')
             ->when($request->search, fn($q) =>
                 $q->where('vendor_name', 'ILIKE', "%{$request->search}%")
             )

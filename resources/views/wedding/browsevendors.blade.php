@@ -185,33 +185,31 @@
     >
         {{-- VENDOR DETAILS MODAL --}}
         <template x-if="openModal && selectedVendor.id">
-            <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
+            <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4" @click="openModal = false">
                 <div 
-                    class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border-2 border-pink-200 my-8"
+                    class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border-2 border-pink-200 my-8 relative flex flex-col max-h-[90vh]"
                     @click.stop
                 >
                     {{-- MODAL HEADER --}}
-                    <div class="flex items-center justify-between p-6 border-b-2 border-pink-200">
+                    <div class="flex items-center justify-between p-6 border-b-2 border-pink-200 flex-shrink-0">
                         <h2 class="text-2xl font-bold text-rose-700" x-text="selectedVendor.vendor_name"></h2>
                         <button 
                             @click="openModal = false"
-                            class="text-gray-400 hover:text-gray-600 transition text-2xl"
+                            class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition text-2xl"
                         >
                             ✖
                         </button>
                     </div>
 
-                    {{-- MODAL BODY --}}
-                    <div class="p-6 grid md:grid-cols-2 gap-6">
-                        
-                        {{-- LEFT: IMAGE --}}
-                        <div class="flex flex-col gap-4">
+                    {{-- MODAL BODY - SCROLLABLE --}}
+                    <div class="overflow-y-auto flex-1 p-6">
+                        <div class="grid md:grid-cols-2 gap-6">
                             <div 
                                 class="w-full h-64 rounded-xl bg-gray-300 bg-cover bg-center"
                                 :style="{
                                     'backgroundImage': selectedVendor.banner_url 
-                                        ? 'url(' + '{{ asset('image/') }}' + selectedVendor.banner_url + ')' 
-                                        : 'url(' + '{{ asset('image/vendor-fallback.jpg') }}' + ')'
+                                        ? `url('/image/${selectedVendor.banner_url}')` 
+                                        : `url('{{ asset('image/vendor-fallback.jpg') }}')`
                                 }"
                             ></div>
 
@@ -258,7 +256,7 @@
                             {{-- CATEGORY & LOCATION --}}
                             <div class="mb-4">
                                 <p class="text-sm text-gray-600 mb-1">Category</p>
-                                <p class="text-lg font-bold text-rose-700" x-text="selectedVendor.category"></p>
+                                <p class="text-lg font-bold text-rose-700" x-text="getServiceNames(selectedVendor.service_ids)"></p>
                             </div>
 
                             <div class="mb-4">
@@ -287,6 +285,31 @@
                                 </div>
                             </div>
 
+                            {{-- REVIEWS SECTION --}}
+                            <div class="mb-6">
+                                <p class="text-sm text-gray-600 mb-3 font-bold">Customer Reviews</p>
+                                <template x-if="selectedVendor.reviews && selectedVendor.reviews.length > 0">
+                                    <div class="space-y-3 max-h-48 overflow-y-auto">
+                                        <template x-for="review in selectedVendor.reviews" :key="review.id">
+                                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <p class="text-sm font-semibold text-gray-700">Anonymous</p>
+                                                    <div class="flex gap-0.5">
+                                                        <template x-for="star in 5" :key="star">
+                                                            <span class="text-sm" x-text="star <= review.rating ? '⭐' : '☆'"></span>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                                <p class="text-xs text-gray-600 leading-relaxed" x-text="review.review"></p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                <template x-if="!selectedVendor.reviews || selectedVendor.reviews.length === 0">
+                                    <p class="text-xs text-gray-500">No reviews yet</p>
+                                </template>
+                            </div>
+
                             {{-- BOOKING BUTTON --}}
                             <template x-if="isVendorBooked(selectedVendor.id)">
                                 <button 
@@ -308,7 +331,6 @@
                                 </button>
                             </template>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -456,7 +478,7 @@ function renderVendors() {
                 </h3>
 
                 <p class="text-sm text-gray-600 font-semibold mb-1">
-                    ${vendor.category}
+                    ${vendor.service_ids}
                 </p>
 
                 <p class="text-xs text-gray-500 mb-3 flex items-center gap-1">
@@ -486,6 +508,8 @@ function renderVendors() {
 
 // Alpine.js Modal Manager
 function modalManager() {
+    const vendorCategories = @json(config('vendor_categories'));
+    
     return {
         openModal: false,
         bookedModal: false,
@@ -496,6 +520,24 @@ function modalManager() {
 
         loadVendors() {
             window.modalState = this;
+        },
+
+        getServiceNames(serviceIds) {
+            if (!serviceIds) return '-';
+            if (typeof serviceIds === 'string') {
+                try {
+                    serviceIds = JSON.parse(serviceIds);
+                } catch (e) {
+                    return '-';
+                }
+            }
+            if (!Array.isArray(serviceIds)) return '-';
+            
+            const names = serviceIds
+                .map(id => vendorCategories[id] || '')
+                .filter(name => name !== '');
+            
+            return names.length > 0 ? names.join(', ') : '-';
         },
 
         isVendorBooked(vendorId) {
