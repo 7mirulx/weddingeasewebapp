@@ -58,7 +58,7 @@
                                 @endfor
                             </div>
                         </div>
-                        <p class="text-gray-700">{{ $review->comment ?? 'No comment provided' }}</p>
+                        <p class="text-gray-700">{{ $review->review ?? 'No review provided' }}</p>
                     </div>
                 @endforeach
             </div>
