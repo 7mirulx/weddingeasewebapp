@@ -14,8 +14,7 @@
 
         <!-- TOP SECTION -->
         <div class="pt-6 px-6 pb-4 border-b border-pink-200">
-            <h1 class="text-xl font-bold text-rose-700">Jom Kahwin</h1>
-            <p class="text-xs text-rose-500 font-semibold mt-1">USER DASHBOARD</p>
+            <h1 class="text-xl font-bold text-rose-700">WeddingEase</h1>
         </div>
 
         <!-- NAVIGATION -->
@@ -39,10 +38,30 @@
                 </svg>
                 <span>Pre Wedding Preparation</span>
             </a>
-            <!-- WEDDING PLANNER SUBMENU -->
-            <div x-data="{ open: false }" class="space-y-1">
 
-                <button @click="open = !open"
+            <a href="{{ url('/vendors') }}"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg transition text-gray-700 hover:bg-pink-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 7V6a3 3 0 013-3h0a3 3 0 013 3v1m-9 4h12m-13 8h14a2 2 0 002-2v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2z" />
+                </svg>
+                <span>Browse Vendors</span>
+            </a>
+
+            <a href="{{ url('/myvendors') }}"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg transition text-gray-700 hover:bg-pink-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-600" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                Vendors Preparation
+            </a>
+            <!-- WEDDING PLANNER SUBMENU -->
+            <!-- <div x-data="{ open: false }" class="space-y-1">
+
+                <!-- <button @click="open = !open"
                     class="flex items-center justify-between w-full px-3 py-2 rounded-lg transition text-gray-700 hover:bg-pink-100">
                     <span class="flex items-center gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700" fill="none"
@@ -51,9 +70,9 @@
                                 d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                         <span>Plan Your Wedding</span>
-                    </span>
+                    </span> -->
 
-                    <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-700" fill="none"
+                    <!-- <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-700" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M6 9l6 6 6-6" />
@@ -63,10 +82,10 @@
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M18 15l-6-6-6 6" />
-                    </svg>
-                </button>
+                    </svg> -->
+                <!-- </button> -->
 
-                <div x-show="open" x-collapse class="ml-10 space-y-1">
+                <!-- <div x-show="open" x-collapse class="ml-10 space-y-1"> -->
 
                     <!-- Budgeting -->
                     <!-- <a href="{{ url('/budgeting') }}"
@@ -102,7 +121,7 @@
                     </a> -->
 
                     <!-- My Vendors -->
-                    <a href="{{ url('/myvendors') }}"
+                    <!-- <a href="{{ url('/myvendors') }}"
                         class="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-rose-700 hover:bg-pink-50 rounded">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-600" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor">
@@ -110,11 +129,11 @@
                                 d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                         Vendors Preparation
-                    </a>
+                    </a> -->
 
-                </div>
+                <!-- </div> -->
 
-            </div>
+            <!-- </div> -->
 
             <!-- My Profile -->
             <a href="{{ url('/profile') }}"
@@ -131,15 +150,7 @@
             
 
             <!-- Vendor Directory -->
-            <a href="{{ url('/vendors') }}"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg transition text-gray-700 hover:bg-pink-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700"
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                        d="M9 7V6a3 3 0 013-3h0a3 3 0 013 3v1m-9 4h12m-13 8h14a2 2 0 002-2v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2z" />
-                </svg>
-                <span>Browse Vendors</span>
-            </a>
+            
 
             <!-- Settings -->
             <!-- <a href="{{ url('/settings') }}"

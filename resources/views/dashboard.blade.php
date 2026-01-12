@@ -161,7 +161,7 @@
                                 {{ $booking->vendor->vendor_name ?? '-' }}
                             </td>
                             <td class="py-3">
-                                {{ $booking->vendor->category ?? '-' }}
+                                {{ config('vendor_categories.' . ($booking->vendor->service_ids[0] ?? null)) ?? '-' }}
                             </td>
                             <td class="py-3">
                                 RM {{ number_format($booking->vendor->starting_price ?? 0, 2) }}
