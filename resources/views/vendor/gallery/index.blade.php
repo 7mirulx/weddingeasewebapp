@@ -55,7 +55,7 @@
             @endif
         </div>
 
-        <div class="mb-8 p-6 border-2 border-dashed border-indigo-300 rounded-lg bg-indigo-50">
+        <!-- <div class="mb-8 p-6 border-2 border-dashed border-indigo-300 rounded-lg bg-indigo-50">
             <h3 class="text-lg font-semibold text-indigo-700 mb-4">Upload New Image</h3>
             <p class="text-gray-600 mb-4">Max 4 images • JPG, PNG, GIF • Max 2MB per image</p>
 
@@ -82,10 +82,10 @@
                     {{ $message }}
                 </div>
             @enderror
-        </div>
+        </div> -->
 
         <!-- Current Gallery -->
-        <div>
+        <!-- <div>
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Current Images ({{ count($gallery) }}/4)</h3>
 
             @if(count($gallery) > 0)
@@ -115,7 +115,7 @@
                     <p class="text-gray-400 text-sm mt-2">Upload your first image to get started</p>
                 </div>
             @endif
-        </div>
+        </div> -->
     </div>
 </div>
 
