@@ -57,6 +57,6 @@ class Booking extends Model
             return null;
         }
         
-        return now()->diffInDays(\Carbon\Carbon::parse($weddingDate), false);
+        return (int) now()->diffInDays(\Carbon\Carbon::parse($weddingDate), false);
     }
 }
