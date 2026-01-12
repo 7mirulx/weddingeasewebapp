@@ -6,7 +6,7 @@
 <div class="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 py-12 px-4">
     <div class="max-w-4xl mx-auto">
         {{-- Important Notice --}}
-        <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+        <!-- <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
             <div class="flex items-start gap-3">
                 <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zm-11-1a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"></path>
@@ -16,7 +16,7 @@
                     <p class="text-blue-800 text-sm">You have a valid claim token - you may now proceed with the claim process below.</p>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         {{-- Vendor Preview Card --}}
         <div class="bg-white rounded-xl shadow-lg border-2 border-pink-200 overflow-hidden mb-8">
@@ -240,13 +240,14 @@
                     <!-- Registration Complete -->
                     <div id="completeState" class="hidden">
                         <div class="text-5xl mb-4">🎉</div>
-                        <h2 class="text-2xl font-bold text-green-600 mb-2">Business Claimed!</h2>
+                        <h2 class="text-2xl font-bold text-green-600 mb-2">Business Claimed Successfully!</h2>
                         <div class="space-y-2 text-left bg-green-50 p-4 rounded-lg mb-4">
                             <p class="text-sm text-gray-700"><strong>✓ Payment Completed</strong> - RM 99.00</p>
                             <p class="text-sm text-gray-700"><strong>✓ Account Registered</strong></p>
                             <p class="text-sm text-gray-700"><strong>✓ Business Claimed</strong></p>
                         </div>
-                        <p class="text-gray-600 mb-4">Redirecting to your dashboard...</p>
+                        <p class="text-gray-600 mb-4">Please log in with your credentials to access your dashboard.</p>
+                        <p class="text-sm text-gray-500">Redirecting to login page...</p>
                     </div>
 
                     <!-- Error State -->
@@ -395,9 +396,9 @@ function processRegistration(claimToken) {
             document.getElementById('successState').classList.add('hidden');
             document.getElementById('completeState').classList.remove('hidden');
 
-            // Redirect after 3 seconds
+            // Redirect to login page after 3 seconds
             setTimeout(() => {
-                window.location.href = result.data.redirect_url;
+                window.location.href = '{{ route("login") }}';
             }, 3000);
         } else {
             showPaymentError(result.data.message || 'Registration failed');
