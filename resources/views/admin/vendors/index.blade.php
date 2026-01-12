@@ -5,9 +5,9 @@
 @section('content')
 <div class="mb-6 flex justify-between items-center">
     <h2 class="text-2xl font-bold text-gray-800">Vendors Management</h2>
-    <a href="{{ route('admin.vendors.create') }}" class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 font-semibold">
+    <!-- <a href="{{ route('admin.vendors.create') }}" class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 font-semibold">
         + Add New Vendor
-    </a>
+    </a> -->
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">
